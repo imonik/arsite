@@ -884,13 +884,13 @@ section
 
 .testimonials
 {
-	padding-top: 316px;
+	padding-top: 50px;
 	padding-bottom: 100px;
 }
-.testimonials .section_title
+/* .testimonials .section_title
 {
 	color: #fff;
-}
+} */
 .test:not(:last-child)
 {
 	margin-bottom: 82px;
@@ -908,7 +908,7 @@ section
 }
 .test_1
 {
-	margin-top: 137px;
+	margin-top: 40px;
 }
 .test_name
 {
@@ -935,12 +935,13 @@ section
 }
 .test_text
 {
-	margin-top: 27px;
+	margin-top: 20 px;
+
 }
 .test_text p
 {
-	font-style: italic;
-	color: #a8a8a8;
+	font-size: 20px;
+	color: black;
 }
 .test_rating
 {
