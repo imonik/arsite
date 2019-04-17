@@ -1157,19 +1157,19 @@ section
 	display: block;
 	width: 100%;
 	background: #262626;
-	padding-top: 96px;
-	border-top: solid 1px #88591d;
+	padding-top: 20px;
+	border-top: solid 3px #88591d;
 	padding-bottom: 20px;
 }
 .footer_content
 {
-	padding-bottom: 253px;
+	padding-bottom: 53px;
 	z-index: 1;
 }
 .footer_logo .logo
 {
 	display: inline-block;
-	left: auto;
+	margin: auto;
 }
 .footer_logo .logo > div
 {
