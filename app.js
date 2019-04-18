@@ -33,18 +33,25 @@ app.get('/backdoor', function(req, res) {
 
 app.get('/main', function(req, res) {
   var user = req.session.user;
-  var schedule = getSchedule();
-  res.render('pages/main', { data: { user: user, schedule: schedule } });
+
+  //var schedule = getSchedule();
+
+  connection.query("SELECT * FROM schedule", function (error, result, fields) {
+    if (error){
+      res.render('pages/error');
+      console.log(error);
+    } 
+
+    if (result.length == 0){
+			res.send('No results for that email. Please try again.\n');
+		} 
+		else {
+      //console.log(JSON.stringify(result));
+      res.render('pages/main', { data: { user: user, schedule: result} });
+    }
+  })
 });
 
-function getSchedule() {
-  var schedule = [
-    { class_name: "class 1", start_date: "2019-04-16 09:30:00", instructor: "Joe"},
-    { class_name: "class 1", start_date: "2019-04-16 12:30:00", instructor: "Jon"},
-    { class_name: "class 1", start_date: "2019-04-16 12:30:00", instructor: "Jen"},
-  ];
-  return schedule;
-}
 app.get('/about', function(req, res) {
   res.render('pages/about')
 });
@@ -52,14 +59,22 @@ app.get('/about', function(req, res) {
 app.get('/error', function(req, res) {
   res.render('pages/error');
 });
+app.post('/schedule', function(req, res){
+
+  console.log("SCHEDULE");
+  var val = [req.body.class_name, req.body.start_time, req.body.end_time, 1,1];
+  console.log("class name " + req.body.class_name);
+  connection.query('INSERT INTO schedule (name, start_time, end_time, instructor_id, status) VALUES (?,?,?,?,?)', val ,function(error, result, fields){
+    if (error) throw error; 
+    //console.log("Number of records inserted: " + result.affectedRows);
+  });
+});
 
 app.post('/login', function(req, res) {
-  console.log("The body is...")
-  console.log(req.body);
   connection.query('SELECT * FROM admins WHERE email = ?', [req.body.email], function (error, results, fields) {
     if (error) throw error; 
     
-    console.log(results);
+    //console.log(results);
 
 		if (results.length == 0){
 			res.send('No results for that email. Please try again.\n');
@@ -67,22 +82,33 @@ app.post('/login', function(req, res) {
 		else {
 			//bcrypt.compare(req.params.password, results[0].password_hash, function(err, result) {
 				if (req.body.password === results[0].password) {
-          console.log('User exists ' +  results[0].email);
-          console.log('results ' + JSON.stringify({res: results[0]})) ;
-          
+          //console.log('User exists ' +  results[0].email);
           // At this point the user is found in the db and is valid.
-          
-          //req.session.user_id = results[0].id;
-          //req.session.email = results[0].email;
           req.session.user = results[0];
-
           res.redirect('/main');
-
-          
 				} else {
             console.log('Password does not match. Redirecting to home.');
             res.redirect('/error');
 			  }
+			}//);
+		//}
+});
+});
+
+app.get('/getinstructors', function(req, res) {
+  connection.query('SELECT * FROM instructors WHERE is_active = ?', [1], function (error, results, fields) {
+    if (error) throw error; 
+    
+    //console.log(results);
+
+		if (results.length == 0){
+			res.send('There a no instructors active.\n');
+		} 
+		else {
+          // At this point the user is found in the db and is valid.
+          //req.session.user = results[0];
+          console.log(results)
+          res.send(results);
 			}//);
 		//}
 });

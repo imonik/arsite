@@ -47,6 +47,7 @@ body
 	background: #FFFFFF;
 	color: #a5a5a5;
 }
+
 div
 {
 	display: block;
@@ -156,6 +157,9 @@ section
 	display: block;
 	position: relative;
 	box-sizing: border-box;
+}
+.withe_text {
+	color: #F7F7F7;
 }
 .clear
 {
