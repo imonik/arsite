@@ -72,7 +72,7 @@
 			<div class="container">
 				<div class="row">
 					<div class="col">
-						<h1 class="text-light text-center">Clases de Hoy</h1>
+						<h1 class="text-light text-center">Modificar Clase</h1>
 
 						<div class="container-form withe_text mb-2">
 							<div class="expand-collapse"><h1><span>-</span></h1>
@@ -82,12 +82,14 @@
 								<form>
 									<div class="form-group d-inline"> 
 										<label for="clase">Clase</label>
-										<input type="text" class="form-control-sm" id="clase" placeholder="Pole Sport">
+										<input type="text" class="form-control-sm" id="clase" value="<%= data.schedule.name%>">
 										<label for="instructor">Instructor</label>
-										<select class="form-control-sm" id="instructor">
-										</select>
+                                        
+                                        <select class="form-control-sm" id="instructor">
+                                        </select>
+                                        
 										<label for="start_time"  class="mr-1">Dia</label>
-										<input type='text' class="form-control-sm"   id='date'/>
+										<input type='text' class="form-control-sm"   id='date' value="<%= data.schedule.day%>"/>
 									
 										<label for="start_time"  class="mr-1">De</label>
 										<select class="form-control-sm " id="start_time">
@@ -100,41 +102,14 @@
 											<option value="9:00">9:00</option>
 											<option value="9:30">9:30</option>
 										</select>
-									</div>
+                                    </div>
+                                    <input type="hidden" id='hdn-instructor-id' value='<%= data.schedule.instructor%>'>
 								</form>
 								<button id="btn-add-schedule"  class="btn btn-secondary mt-2 mb-2">Agregar Clase</button>
 							</div>
-						</div>
-						<table class="table table-striped table-dark">
-							<thead>
-								<tr>
-									<!-- <th scope="col">#</th> -->
-									<th scope="col">Clase</th>
-									<th scope="col">Inicio</th>
-									<th scope="col">Fin</th>
-									<th scope="col">Instructor</th>
-									<th scope="col">Status</th>
-									<th scope="col" colspan="2">Acciones</th>
-								</tr>
-							</thead>
-								<% if(data.schedule.length){
-									for(var i = 0; i < data.schedule.length; i++) { %>
-										<tr>
-											<!-- <td><a haref="/editschedule/?id="></a><%=data.schedule[i].id%></a></td> -->
-											<td><%=data.schedule[i].name%></td>
-											<td><%=data.schedule[i].start_time%></td>
-											<td><%=data.schedule[i].end_time%></td>
-											<td><%=data.schedule[i].instructor_id%></td>
-											<td><%=data.schedule[i].status%></td>
-											<td><a href="/editschedule/<%=data.schedule[i].id%>">Edit</a></td>
-											<td><a href="/editschedule/<%=data.schedule[i].id%>">Delete</a></td>
-										<!-- <% for (var j in data.schedule[i]) { %>
-										<td><%=data.schedule[i][j]%></td>
-										<% } %> -->
-										</tr>
-									<% }
-								} %>
-						</table>
+                        </div>
+                        <h1><%=data.result%></h1>
+						
 					</div>
 				</div>
 			</div>

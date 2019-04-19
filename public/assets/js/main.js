@@ -1,8 +1,41 @@
 $(document).ready(function()
 {
-    console.log('READY IN MAIN');
+    var date;
+    var start;
+    var end;
+    var instructor;
+
+
+    var $instructorSelect= $("#instructor");
+    var $dateSelect = $("#date");
+    var $statTime = $("#start_time");
+    var $endTime = $("#end_time");
+
+    $dateSelect.change(function() {
+        date = $(this).val();
+        console.log(date); 
+    });
+
+    $instructorSelect.change(function() {
+        instructor = $(this).val();
+        console.log(instructor);
+    }); 
+
+
+    $statTime.change(function() {
+        start = $(this).children("option:selected").val();
+        console.log(start); 
+    });
+
+    $endTime.change(function() {
+        end = $(this).children("option:selected").val();
+        console.log(end);
+    });
+
     getInstructors();
-    $('#date').datepicker();
+    $dateSelect.datepicker();
+
+
     $(".expand-collapse").click(function () {
 
         $header = $(this);
@@ -15,6 +48,7 @@ $(document).ready(function()
             $header.html(function () {
                 //change text based on condition
                 return $content.is(":visible") ? "<h1><span>-</span></h1>" : "<h1><span>+</span></h1>";
+
             });
         });
     
@@ -24,39 +58,26 @@ $(document).ready(function()
         $.ajax({
             url: '/getinstructors',
             method: 'GET'
-        }).then(function(result){
-            // for (var i in schedule) {
-            //     var p = $('<li>');
-            //     p.text(`id: ${cats[i].id}, cat name: ${cats[i].cat_name}`);
-            //     var a = $('<a>');
-            //     a.text('delete');
-            //     a.attr('href', '/cats-delete?cat_id='+cats[i].id)
-            //     p.append(a);
-            //     $('div').append(p);
-            // }
-
-            var $dropdown = $("#instructor");
+        }).then(function(result) {
             $.each(result, function() {
-            $dropdown.append($("<option />").val(this.id).text(this.name));
+                var instructor_id = $('#hdn-instructor-id').val();
+                $instructorSelect.append(`<option value="${this.id}" ${instructor_id==this.id ? 'selected' : ''}>${this.name}</option>`);
             });
-
-            console.log(schedule);
         });
     }
 
 
     $('#btn-add-schedule').click(function(e) {
         e.preventDefault();
-        var className = "Aerial2";
-        var start = "2019-04-18 09:30:00";
-        var end ="2019-04-18 10:30:00";
-        var instructor = 1;
+
+        let className = $("#clase").val();
+        let date2 = new Date(date).toISOString().slice(0, 10);
         var status = 1;
-        console.log("la data aqui" +JSON.stringify( { class_name: className, start_time : start, end_time : end, instructor_id : instructor, status :  status }));
+
         $.ajax({
             url: '/schedule',
             method: 'POST',
-            data: { class_name: className, start_time: start, end_time: end, instructor_id: instructor, status: status }
+            data: { class_name: className, start_time: date2 + " " + start , end_time: date2 + " " + end, instructor_id: instructor, status: status }
         }).then(function(message){
             //$('#message').text(message);
             console.log(message);

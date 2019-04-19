@@ -34,8 +34,6 @@ app.get('/backdoor', function(req, res) {
 app.get('/main', function(req, res) {
   var user = req.session.user;
 
-  //var schedule = getSchedule();
-
   connection.query("SELECT * FROM schedule", function (error, result, fields) {
     if (error){
       res.render('pages/error');
@@ -44,31 +42,58 @@ app.get('/main', function(req, res) {
 
     if (result.length == 0){
 			res.send('No results for that email. Please try again.\n');
-		} 
-		else {
-      //console.log(JSON.stringify(result));
+		} else {
       res.render('pages/main', { data: { user: user, schedule: result} });
     }
   })
 });
 
-app.get('/about', function(req, res) {
-  res.render('pages/about')
-});
-
 app.get('/error', function(req, res) {
   res.render('pages/error');
 });
-app.post('/schedule', function(req, res){
 
+app.post('/schedule', function(req, res){
+  console.log("ADD SCHEDULE");
+  var val = [req.body.class_name, req.body.start_time, req.body.end_time, 1,1];
+
+  connection.query('INSERT INTO schedule (name, start_time, end_time, instructor_id, status) VALUES (?,?,?,?,?)', val ,function(error, result, fields){
+    if (error) throw error; 
+  });
+});
+
+app.get('/editschedule/:id', function(req, res){
+  var user = req.session.user;
+  console.log(" GET SCHEDULE BY ID");
+  var val = [req.body.id];
+  console.log("ID" + req.params.id);
+  connection.query('SELECT * FROM schedule WHERE id = ?',  req.params.id ,function(error, result, fields){
+    if (error) throw error; 
+    console.log(result)
+    if(result){
+      //var date = result[0].start_time;
+      let ts = new Date(result[0].start_time);
+      let te = new Date(result[0].end_time);
+      let date = ts.toLocaleDateString();
+      let start = ts.toLocaleTimeString();
+      let end = te.toLocaleTimeString();
+      console.log(date, start, end);
+      resu = {id :result[0].id, name:result[0].name , start: ts , end: te, day: date, instructor: result[0].instructor_id , status: 1};
+      
+      res.render('pages/editschedule', { data: { user: user, schedule: resu} });
+    }
+    
+  });
+});
+
+app.post('/deleteschedule/:id', function(req, res){
   console.log("SCHEDULE");
   var val = [req.body.class_name, req.body.start_time, req.body.end_time, 1,1];
-  console.log("class name " + req.body.class_name);
   connection.query('INSERT INTO schedule (name, start_time, end_time, instructor_id, status) VALUES (?,?,?,?,?)', val ,function(error, result, fields){
     if (error) throw error; 
     //console.log("Number of records inserted: " + result.affectedRows);
   });
 });
+
 
 app.post('/login', function(req, res) {
   connection.query('SELECT * FROM admins WHERE email = ?', [req.body.email], function (error, results, fields) {
@@ -107,7 +132,7 @@ app.get('/getinstructors', function(req, res) {
 		else {
           // At this point the user is found in the db and is valid.
           //req.session.user = results[0];
-          console.log(results)
+          //console.log(results)
           res.send(results);
 			}//);
 		//}
