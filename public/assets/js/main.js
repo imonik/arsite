@@ -60,11 +60,24 @@ $(document).ready(function()
             method: 'GET'
         }).then(function(result) {
             $.each(result, function() {
-                var instructor_id = $('#hdn-instructor-id').val();
+                var instructor_id = $('#hdnInstructorId').val();
                 $instructorSelect.append(`<option value="${this.id}" ${instructor_id==this.id ? 'selected' : ''}>${this.name}</option>`);
             });
         });
     }
+
+    selectAllDropdowns();
+    function selectAllDropdowns(){
+        $("#start_time option").each(function(){
+            console.log(this);
+
+            if(this.value == $("#hdnStart").val().substring(0, 4)){
+                $(this).attr('selected', true);
+            }
+        });
+    }
+
+
 
 
     $('#btn-add-schedule').click(function(e) {

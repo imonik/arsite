@@ -91,6 +91,10 @@
 									
 										<label for="start_time"  class="mr-1">De</label>
 										<select class="form-control-sm " id="start_time">
+											<option value="6:00">6:00</option>
+											<option value="6:30">6:30</option>
+											<option value="7:00">7:00</option>
+											<option value="7:30">7:30</option>
 											<option value="8:00">8:00</option>
 											<option value="8:30">8:30</option>
 										</select>
@@ -126,11 +130,8 @@
 											<td><%=data.schedule[i].end_time%></td>
 											<td><%=data.schedule[i].instructor_id%></td>
 											<td><%=data.schedule[i].status%></td>
-											<td><a href="/editschedule/<%=data.schedule[i].id%>">Edit</a></td>
-											<td><a href="/editschedule/<%=data.schedule[i].id%>">Delete</a></td>
-										<!-- <% for (var j in data.schedule[i]) { %>
-										<td><%=data.schedule[i][j]%></td>
-										<% } %> -->
+											<td><a href="/editschedule/<%=data.schedule[i].id%>">Actualizar</a></td>
+											<td><a href="/deleteschedule?id=<%=data.schedule[i].id%>">Borrar</a></td>
 										</tr>
 									<% }
 								} %>

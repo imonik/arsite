@@ -63,9 +63,8 @@ app.post('/schedule', function(req, res){
 
 app.get('/editschedule/:id', function(req, res){
   var user = req.session.user;
-  console.log(" GET SCHEDULE BY ID");
-  var val = [req.body.id];
-  console.log("ID" + req.params.id);
+  //console.log(" GET SCHEDULE BY ID");
+  //console.log("ID" + req.params.id);
   connection.query('SELECT * FROM schedule WHERE id = ?',  req.params.id ,function(error, result, fields){
     if (error) throw error; 
     console.log(result)
@@ -76,21 +75,23 @@ app.get('/editschedule/:id', function(req, res){
       let date = ts.toLocaleDateString();
       let start = ts.toLocaleTimeString();
       let end = te.toLocaleTimeString();
-      console.log(date, start, end);
-      resu = {id :result[0].id, name:result[0].name , start: ts , end: te, day: date, instructor: result[0].instructor_id , status: 1};
-      
+     
+      resu = {id :result[0].id, name:result[0].name , start: start , end: end, day: date, instructor: result[0].instructor_id , status: 1};
+      console.log(resu.schedule);
       res.render('pages/editschedule', { data: { user: user, schedule: resu} });
     }
-    
   });
 });
 
-app.post('/deleteschedule/:id', function(req, res){
-  console.log("SCHEDULE");
-  var val = [req.body.class_name, req.body.start_time, req.body.end_time, 1,1];
-  connection.query('INSERT INTO schedule (name, start_time, end_time, instructor_id, status) VALUES (?,?,?,?,?)', val ,function(error, result, fields){
-    if (error) throw error; 
-    //console.log("Number of records inserted: " + result.affectedRows);
+app.get('/deleteschedule', function(req, res){
+  console.log("DELETESCHEDULE");
+  console.log( req.body.id);
+  console.log( req.params.id);
+  console.log( req.param.id);
+  console.log( req.query.id);
+  connection.query('DELETE FROM schedule WHERE id =?',  req.query.id ,function(error, result, fields){
+    if (error) res.send(error);
+    else res.redirect('/main'); // sends to the home route.
   });
 });
 

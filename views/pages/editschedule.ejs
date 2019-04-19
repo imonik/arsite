@@ -93,9 +93,12 @@
 									
 										<label for="start_time"  class="mr-1">De</label>
 										<select class="form-control-sm " id="start_time">
-											<option value="8:00">8:00</option>
-											<option value="8:30">8:30</option>
-										</select>
+                                                <option value="6:00">6:00</option>
+                                                <option value="6:30">6:30</option>
+                                                <option value="7:00">7:00</option>
+                                                <option value="7:30">7:30</option>
+                                                <option value="8:00">8:00</option>
+                                                <option value="8:30">8:30</option>										</select>
 
 										<label for="end_time"  class="mr-1 d-inline">a</label>
 										<select class="form-control-sm d-inline" id="end_time">
@@ -103,9 +106,11 @@
 											<option value="9:30">9:30</option>
 										</select>
                                     </div>
-                                    <input type="hidden" id='hdn-instructor-id' value='<%= data.schedule.instructor%>'>
+                                    <input type="hidden" id='hdnInstructorId' value='<%= data.schedule.instructor%>'>
+                                    <input type="hidden" id='hdnStart' value='<%= data.schedule.start%>'>
+                                    <input type="hidden" id='hdnEnd' value='<%= data.schedule.end%>'>
 								</form>
-								<button id="btn-add-schedule"  class="btn btn-secondary mt-2 mb-2">Agregar Clase</button>
+								<button id="btn-add-schedule"  class="btn btn-secondary mt-2 mb-2">Guardar Cambios</button>
 							</div>
                         </div>
                         <h1><%=data.result%></h1>
