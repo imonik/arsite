@@ -31,7 +31,7 @@ app.get('/backdoor', function(req, res) {
   res.render('pages/backdoor');
 });
 
-app.get('/main', function(req, res) {
+app.get('/mainschedule', function(req, res) {
   var user = req.session.user;
 
   connection.query("SELECT * FROM schedule", function (error, result, fields) {
@@ -43,7 +43,7 @@ app.get('/main', function(req, res) {
     if (result.length == 0){
 			res.send('No results for that email. Please try again.\n');
 		} else {
-      res.render('pages/main', { data: { user: user, schedule: result} });
+      res.render('pages/mainschedule', { data: { user: user, schedule: result} });
     }
   })
 });
@@ -91,7 +91,7 @@ app.get('/deleteschedule', function(req, res){
   console.log( req.query.id);
   connection.query('DELETE FROM schedule WHERE id =?',  req.query.id ,function(error, result, fields){
     if (error) res.send(error);
-    else res.redirect('/main'); // sends to the home route.
+    else res.redirect('/mainschedule'); // sends to the home route.
   });
 });
 
@@ -111,7 +111,7 @@ app.post('/login', function(req, res) {
           //console.log('User exists ' +  results[0].email);
           // At this point the user is found in the db and is valid.
           req.session.user = results[0];
-          res.redirect('/main');
+          res.redirect('/mainschedule');
 				} else {
             console.log('Password does not match. Redirecting to home.');
             res.redirect('/error');
@@ -140,9 +140,95 @@ app.get('/getinstructors', function(req, res) {
 });
 });
 
+app.get('/getmemberships', function(req, res){
+  connection.query('SELECT * FROM memberships', function(error, result, fields){
+    if(error) throw error;
+
+    if(result.length == 0 ){
+      res.send("There are not memberships to show");
+    } else {
+      res.send(result);
+    }
+
+  });
+});
+
+app.get('/mainstudents', function(req, res) {
+  var user = req.session.user;
+
+  connection.query("SELECT * FROM students", function (error, result, fields) {
+    if (error){
+      res.render('pages/error');
+      console.log(error);
+    } 
+    console.log(result);
+    if (result.length == 0){
+			res.send('No results for that email. Please try again.\n');
+		} else {
+      
+      res.render('pages/mainstudents', { data: { user: user, students : result} });
+    }
+  })
+});
+
+app.post('/addstudent', function(req, res){
+  console.log("ADD STUDENT");
+  var val = [req.body.name, req.body.last_name, req.body.start_time,  req.body.membership_type,  req.body.membership_end_date];
+
+  connection.query('INSERT INTO students (name, last_name, started_date, membership_type, membership_end_date) VALUES (?,?,?,?,?)', val ,function(error, result, fields){
+    if (error) throw error; 
+  });
+});
+
+
+app.get('/editstudent/:id', function(req, res){
+  var user = req.session.user;
+  console.log("EditStudent");
+  connection.query('SELECT * FROM students WHERE id = ?',  req.params.id ,function(error, result, fields){
+    if (error) throw error; 
+    console.log(result)
+    if(result){
+
+
+      console.log( { data: { user: user, student: result[0]} });
+     
+      res.render('pages/editstudent', { data: { user: user, student: result[0]} });
+    }
+  });
+});
+
+app.put('/updatestudent', function(req, res){
+  var user = req.session.user;
+  // let start = req.body.start_time.substring(0, req.body.start_time.indexof("T")) ;
+  // let end;
+  var val = [req.body.name, req.body.last_name, req.body.started_date,  req.body.membership_type,  req.body.membership_end_date, req.body.id ];
+  console.log("EditStudent");
+  connection.query('UPDATE students SET id = ?, name = ?, last_name = ?, started_date = ?, membership_type = ?, membership_end_date = ? WHERE id = ?', val ,function(error, result, fields){
+    if (error) throw console.log(error); 
+    console.log(result)
+    if(result){
+      console.log( { data: { user: user, student: result[0]} });
+     
+      res.render('pages/mainstudent', { data: { user: user, student: result[0]} });
+    }
+  });
+});
+
+app.get('/deletestudent', function(req, res){
+  console.log("DELETESCHEDULE");
+  console.log( req.body.id);
+  console.log( req.params.id);
+  console.log( req.param.id);
+  console.log( req.query.id);
+  connection.query('DELETE FROM students WHERE id =?',  req.query.id ,function(error, result, fields){
+    if (error) res.send(error);
+    else res.redirect('/mainschedule'); // sends to the home route.
+  });
+});
+
 
 module.export = app;
 
 app.listen(3000, function(){
 	console.log('listening on 3000')
-});
+});//11965

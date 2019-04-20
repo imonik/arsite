@@ -81,40 +81,28 @@
 							<div class="content">
 								<form>
 									<div class="form-group d-inline"> 
-										<label for="clase">Clase</label>
-										<input type="text" class="form-control-sm" id="clase" value="<%= data.schedule.name%>">
-										<label for="instructor">Instructor</label>
+										<label for="clase">Nombre</label>
+                                        <input type="text" class="form-control-sm" id="name" value="<%=data.student.name%>">
                                         
-                                        <select class="form-control-sm" id="instructor">
-                                        </select>
+										<label for="name">Apellido</label>
+                                        <input type="text" class="form-control-sm"  id="lastName" value="<%=data.student.last_name%>">
                                         
-										<label for="start_time"  class="mr-1">Dia</label>
-										<input type='text' class="form-control-sm"   id='date' value="<%= data.schedule.day%>"/>
-									
-										<label for="start_time"  class="mr-1">De</label>
-										<select class="form-control-sm " id="start_time">
-                                                <option value="6:00">6:00</option>
-                                                <option value="6:30">6:30</option>
-                                                <option value="7:00">7:00</option>
-                                                <option value="7:30">7:30</option>
-                                                <option value="8:00">8:00</option>
-                                                <option value="8:30">8:30</option>										</select>
+										<label for="date"  class="mr-1">Suscripcion inicia</label>
+                                        <input type='text' class="form-control-sm"   id='date' value="<%=data.student.started_date%>" disabled/>
 
-										<label for="end_time"  class="mr-1 d-inline">a</label>
-										<select class="form-control-sm d-inline" id="end_time">
-											<option value="9:00">9:00</option>
-											<option value="9:30">9:30</option>
+                                        <label for="expiration"  class="mr-1">Expira en:</label>
+                                        <input type='text' class="form-control-sm" value="<%=data.student.membership_end_date%>"  id='expiration'/>
+                                        
+										<label for="memberships"  class="mr-1">De</label>
+										<select class="form-control-sm " id="memberships" value="<%=data.student.membership_type%>">
+                                        <input type="hidden" id="hdnMembership">
+                                        <input type="hidden" id="userId" value="<%=data.student.id%>">
 										</select>
-                                    </div>
-                                    <input type="hidden" id='hdnInstructorId' value='<%= data.schedule.instructor%>'>
-                                    <input type="hidden" id='hdnStart' value='<%= data.schedule.start%>'>
-                                    <input type="hidden" id='hdnEnd' value='<%= data.schedule.end%>'>
+									</div>
 								</form>
-								<button id="btn-add-schedule"  class="btn btn-secondary mt-2 mb-2">Guardar Cambios</button>
+								<button id="btn-update-student"  class="btn btn-secondary mt-2 mb-2">Guardar Caambios</button>
 							</div>
                         </div>
-                        <h1><%=data.result%></h1>
-						
 					</div>
 				</div>
 			</div>
@@ -159,6 +147,6 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 <script src="/assets/plugins/colorbox/jquery.colorbox-min.js"></script>
 <script src="/assets/js/custom.js"></script>
 <!-- <script src="/assets/js/backdoor.js" type="text/javascript"></script> -->
-<script src="/assets/js/mainschedule.js" type="text/javascript"></script>
+<script src="/assets/js/mainstudents.js" type="text/javascript"></script>
 </body>
 </html>>
