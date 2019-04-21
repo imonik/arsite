@@ -15,9 +15,9 @@ app.use(session({ secret: 'app', cookie: { maxAge: 1*1000*60*60*24*365 }}));
 app.use(cookieParser());
 
 var connection = mysql.createConnection({
-  host     : 'localhost', // mysqlserver.cmnemrz1mbor.us-west-1.rds.amazonaws.com
+  host     : 'mysqlserver.cmnemrz1mbor.us-west-1.rds.amazonaws.com',
   user     : 'root',
-  password : 'moni',
+  password : 'password',
   database : 'ar_db'
 });
 
@@ -58,6 +58,7 @@ app.post('/schedule', function(req, res){
 
   connection.query('INSERT INTO schedule (name, start_time, end_time, instructor_id, status) VALUES (?,?,?,?,?)', val ,function(error, result, fields){
     if (error) throw error; 
+    else res.json({result: "success"});
   });
 });
 

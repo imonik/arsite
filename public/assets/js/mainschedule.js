@@ -5,7 +5,6 @@ $(document).ready(function()
     var end;
     var instructor;
 
-
     var $instructorSelect= $("#instructor");
     var $dateSelect = $("#date");
     var $statTime = $("#start_time");
@@ -71,13 +70,13 @@ $(document).ready(function()
         $("#start_time option").each(function(){
             console.log(this);
 
-            if(this.value == $("#hdnStart").val().substring(0, 4)){
+            var hdnStart = $("#hdnStart");
+
+            if (hdnStart && hdnStart.val() && this.value == hdnStart.val().substring(0, 4)) {
                 $(this).attr('selected', true);
             }
         });
     }
-
-
 
 
     $('#btn-add-schedule').click(function(e) {
@@ -94,7 +93,7 @@ $(document).ready(function()
         }).then(function(message){
             //$('#message').text(message);
             console.log(message);
-            //getCats();
+            window.location.replace("/mainschedule"); // redirect to schedules main page (listing)
         });
     });
 
