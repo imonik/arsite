@@ -1,21 +1,25 @@
 $(document).ready(function()
 {
     console.log("READY!!");
-    // var email = $('#email').val();
-    // var password = $('#password').val();
-    var btnLogin = $('#btn-login');
+    var $btnLogin = $('#btn-login');
+    $("#message").text("")
+    var re = /\S+@\S+\.\S+/;
 
-    btnLogin.on('click', function (e) {
-        e.preventDefault();
-        console.log(`credentials ${ $('#email').val()} ${ $('#password').val()}`);
+    $btnLogin.on('click', function (e) {
 
-        $.ajax({
-            url: '/login',
-            data:{ email: $('#email').val(), password: $('#password').val() },
-            method: 'POST'
-        }).then(function(user){
-            $('div').html(user);
-            console.log("user!!!!!! " + user);
-        });
+        var message = "";
+        
+        if($('#password').val() == ""){
+            message += 'Por favor ingrese el password\n';
+        }else if($('#email').val() ==  ""){
+            message += 'Por favor ingrese el correo\n';
+        }else if (!re.test($('#email').val())){
+            message += 'Por favor ingrese un correo valido\n';
+        }
+
+        if(message != ""){
+            e.preventDefault();
+            $("#message").text(message).fadeIn();
+        }
     })
 });

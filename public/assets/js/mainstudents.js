@@ -80,7 +80,7 @@ $(document).ready(function(){
             url: '/updatestudent',
             method: 'PUT',
             // [req.body.name, req.body.las_name, req.body.start_time, membership_type, membership_end_date];
-            data: { name: name, last_name: lastName, start_time: date2,membership_type : membership, membership_end_date : expiration2,  id :uid}
+            data: { name: name, last_name: lastName, started_date: date, membership_type : membership, membership_end_date : expiration2,  id :uid}
         }).then(function(message){
             //$('#message').text(message);
             console.log(message);

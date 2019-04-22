@@ -77,9 +77,6 @@ $(document).ready(function()
         });
     }
 
-
-
-
     $('#btn-add-schedule').click(function(e) {
         e.preventDefault();
 

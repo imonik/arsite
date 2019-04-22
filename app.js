@@ -11,7 +11,7 @@ app.use(express.static("public"));
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.set('view engine', 'ejs');
-app.use(session({ secret: 'app', cookie: { maxAge: 1*1000*60*60*24*365 }}));
+app.use(session({ secret: 'app', cookie: { maxAge: 6000 }}));
 app.use(cookieParser());
 
 var connection = mysql.createConnection({
@@ -32,6 +32,8 @@ app.get('/backdoor', function(req, res) {
 });
 
 app.get('/mainschedule', function(req, res) {
+  console.log(session);
+  console.log(req);
   var user = req.session.user;
 
   connection.query("SELECT * FROM schedule", function (error, result, fields) {
@@ -85,10 +87,6 @@ app.get('/editschedule/:id', function(req, res){
 
 app.get('/deleteschedule', function(req, res){
   console.log("DELETESCHEDULE");
-  console.log( req.body.id);
-  console.log( req.params.id);
-  console.log( req.param.id);
-  console.log( req.query.id);
   connection.query('DELETE FROM schedule WHERE id =?',  req.query.id ,function(error, result, fields){
     if (error) res.send(error);
     else res.redirect('/mainschedule'); // sends to the home route.
@@ -100,26 +98,29 @@ app.post('/login', function(req, res) {
   connection.query('SELECT * FROM admins WHERE email = ?', [req.body.email], function (error, results, fields) {
     if (error) throw error; 
     
-    //console.log(results);
-
 		if (results.length == 0){
-			res.send('No results for that email. Please try again.\n');
+      //res.send('No results for that email. Please try again.\n');
+      res.send('pages/backdoor', {message:'Password does not match. Redirecting to home.'});
 		} 
 		else {
 			//bcrypt.compare(req.params.password, results[0].password_hash, function(err, result) {
 				if (req.body.password === results[0].password) {
           //console.log('User exists ' +  results[0].email);
+
           // At this point the user is found in the db and is valid.
           req.session.user = results[0];
           res.redirect('/mainschedule');
 				} else {
-            console.log('Password does not match. Redirecting to home.');
-            res.redirect('/error');
+            //console.log('Password does not match. Redirecting to home.');
+            //res.redirect('/error');
+            res.send('pages/backdoor', {message:'Password does not match. Redirecting to home.'});
 			  }
 			}//);
 		//}
 });
 });
+
+
 
 app.get('/getinstructors', function(req, res) {
   connection.query('SELECT * FROM instructors WHERE is_active = ?', [1], function (error, results, fields) {
@@ -154,6 +155,7 @@ app.get('/getmemberships', function(req, res){
 });
 
 app.get('/mainstudents', function(req, res) {
+
   var user = req.session.user;
 
   connection.query("SELECT * FROM students", function (error, result, fields) {
@@ -161,11 +163,12 @@ app.get('/mainstudents', function(req, res) {
       res.render('pages/error');
       console.log(error);
     } 
-    console.log(result);
+
     if (result.length == 0){
 			res.send('No results for that email. Please try again.\n');
 		} else {
-      
+      console.log("RESULTS");
+      console.log(result);
       res.render('pages/mainstudents', { data: { user: user, students : result} });
     }
   })
@@ -186,12 +189,9 @@ app.get('/editstudent/:id', function(req, res){
   console.log("EditStudent");
   connection.query('SELECT * FROM students WHERE id = ?',  req.params.id ,function(error, result, fields){
     if (error) throw error; 
-    console.log(result)
+
     if(result){
-
-
       console.log( { data: { user: user, student: result[0]} });
-     
       res.render('pages/editstudent', { data: { user: user, student: result[0]} });
     }
   });
@@ -199,32 +199,32 @@ app.get('/editstudent/:id', function(req, res){
 
 app.put('/updatestudent', function(req, res){
   var user = req.session.user;
-  // let start = req.body.start_time.substring(0, req.body.start_time.indexof("T")) ;
-  // let end;
+
   var val = [req.body.name, req.body.last_name, req.body.started_date,  req.body.membership_type,  req.body.membership_end_date, req.body.id ];
   console.log("EditStudent");
-  connection.query('UPDATE students SET id = ?, name = ?, last_name = ?, started_date = ?, membership_type = ?, membership_end_date = ? WHERE id = ?', val ,function(error, result, fields){
-    if (error) throw console.log(error); 
+  connection.query('UPDATE students SET name = ?, last_name = ?, started_date = ?, membership_type = ?, membership_end_date = ? WHERE id = ?', val ,function(error, result, fields){
+    if (error) throw console.log("error " + error); 
     console.log(result)
     if(result){
       console.log( { data: { user: user, student: result[0]} });
-     
-      res.render('pages/mainstudent', { data: { user: user, student: result[0]} });
     }
+    res.redirect('/mainstudents');
+  }); 
+}); 
+
+app.get('/deletestudent', function(req, res){
+  var user = req.session.user;
+  connection.query('DELETE FROM students WHERE id =?',  req.query.id ,function(error, result, fields){
+    if (error) res.send(error);
+    else res.redirect('/mainstudents'); // sends to the home route.
   });
 });
 
-app.get('/deletestudent', function(req, res){
-  console.log("DELETESCHEDULE");
-  console.log( req.body.id);
-  console.log( req.params.id);
-  console.log( req.param.id);
-  console.log( req.query.id);
-  connection.query('DELETE FROM students WHERE id =?',  req.query.id ,function(error, result, fields){
-    if (error) res.send(error);
-    else res.redirect('/mainschedule'); // sends to the home route.
-  });
-});
+app.get('/logout', function(req, res){
+	req.session.destroy(function(err) {
+	   res.redirect('/')
+	})
+})
 
 
 module.export = app;
