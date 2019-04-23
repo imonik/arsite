@@ -82,10 +82,10 @@
 								<form>
 									<div class="form-group d-inline"> 
 										<label for="clase">Nombre</label>
-                                        <input type="text" class="form-control-sm" id="name" placeholder="Ana">
+                                        <input type="text" class="form-control-sm" id="name" placeholder="">
                                         
 										<label for="name">Apellido</label>
-                                        <input type="text" class="form-control-sm"  id="lastName">
+                                        <input type="text" class="form-control-sm" id="lastName" placeholder="">
                                         
 										<label for="date"  class="mr-1">Suscripcion inicia</label>
                                         <input type='text' class="form-control-sm"   id='date'/>
@@ -93,12 +93,12 @@
                                         <label for="expiration"  class="mr-1">Expira en:</label>
                                         <input type='text' class="form-control-sm"   id='expiration'/>
                                         
-										<label for="memberships"  class="mr-1">De</label>
+										<label for="memberships"  class="mr-1">Tipo de Membresia</label>
 										<select class="form-control-sm " id="memberships">
 										</select>
 									</div>
 								</form>
-								<button id="btn-add-student"  class="btn btn-secondary mt-2 mb-2">Agregar estudiante</button>
+								<button id="btn-add-student" class="btn btn-secondary mt-2 mb-2">Agregar estudiante</button>
 							</div>
                         </div>
 						<table class="table table-striped table-dark">
@@ -112,14 +112,14 @@
                                 </tr>
                                 
                             </thead>
-								    <% if(data.students.length){
+								    <% if(data.students.length) {
 									for(var i = 0; i < data.students.length; i++) { %>
 										<tr>
                                             <td><%=data.students[i].name%> <%=data.students[i].last_name%></td>
                                             <td><%=data.students[i].membership_type%></td>
                                             <td><%=data.students[i].membership_end_date%></td>
                                             <td><a href="/editstudent/<%=data.students[i].id%>">Actualizar</a></td>
-											<td><a href="/deletestudent?id=<%=data.students[i].id%>">Borrr</a></td>
+											<td><a href="/deletestudent?id=<%=data.students[i].id%>">Borrar</a></td>
 										</tr>
 									<% }
 								} %>

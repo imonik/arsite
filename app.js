@@ -169,31 +169,25 @@ app.get('/getmemberships', function(req, res){
 });
 
 app.get('/mainstudents', function(req, res) {
-
   var user = req.session.user;
 
   connection.query("SELECT * FROM students", function (error, result, fields) {
-    if (error){
-      res.render('pages/error');
+    if (error) {
       console.log(error);
+      res.render('pages/error');
     } 
-
-    if (result.length == 0){
-			res.send('No results for that email. Please try again.\n');
-		} else {
-      console.log("RESULTS");
-      console.log(result);
-      res.render('pages/mainstudents', { data: { user: user, students : result} });
-    }
+    console.log(result);
+    res.render('pages/mainstudents', { data: { user: user, students: result } });
   })
 });
 
-app.post('/addstudent', function(req, res){
-  console.log("ADD STUDENT");
-  var val = [req.body.name, req.body.last_name, req.body.start_time,  req.body.membership_type,  req.body.membership_end_date];
+app.post('/addstudent', function(req, res) {
+  console.log("ADD STUDENT ENDPOINT HIT.");
+  var val = [req.body.name, req.body.last_name, req.body.start_time, req.body.membership_type, req.body.membership_end_date];
 
-  connection.query('INSERT INTO students (name, last_name, started_date, membership_type, membership_end_date) VALUES (?,?,?,?,?)', val ,function(error, result, fields){
+  connection.query('INSERT INTO students (name, last_name, started_date, membership_type, membership_end_date) VALUES (?,?,?,?,?)', val ,function(error, result, fields) {
     if (error) throw error; 
+    else res.json({result: "success"});
   });
 });
 
