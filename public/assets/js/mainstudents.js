@@ -70,7 +70,7 @@ $(document).ready(function(){
             console.log(error);
             if (error.status == 403) { // POST /addstudents returns Forbidden due to invalid session.
                 alert("Session has expired. Will redirect to login page.");
-                window.location.replace("/backdoor"); // redirect to students main page (listing)
+                window.location.replace("/backdoor");
             }
         });
     });
