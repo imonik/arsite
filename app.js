@@ -51,13 +51,17 @@ app.get('/mainschedule', function(req, res) {
     if (result.length == 0){
 			res.send('No results for that email. Please try again.\n');
 		} else {
-      // for (let i = 0; i < result.length; i++) {
-      //   let fullDate = new Date(result[i].start_time);
-      //   console.log(fullDate.toISOString().replace(/T/, ' ').      // replace T with a space
-      //   replace(/\..+/, ''))
-       
-      //   result[i].date = '2019-01-01';
-      // }
+       for (let i = 0; i < result.length; i++) {
+         let fullDate = new Date(result[i].date);
+         let date2 = moment(fullDate.toISOString().substring(0, 10), 'YYYY/MM/DD');
+         let train_date = date2.format('DD/MM/YYYY');
+         result[i].date = train_date;
+         let startTime = result[i].start.substring(0,5);
+         let endTime = result[i].end.substring(0,5);
+
+        result[i].start = startTime;
+        endTime = result[i].end = endTime;
+       }
       res.render('pages/mainschedule', { data: { user: user, schedule: result} });
     }
   })
@@ -79,25 +83,29 @@ console.log(val);
 
 app.get('/editschedule/:id', function(req, res){
   var user = req.session.user;
-  //console.log(" GET SCHEDULE BY ID");
-  //console.log("ID" + req.params.id);
   connection.query('SELECT * FROM schedule WHERE id = ?',  req.params.id ,function(error, result, fields){
     if (error) throw error; 
     console.log(result)
     if(result){
-      //var date = result[0].start_time;
-      let ts = new Date(result[0].start_time);
-      let te = new Date(result[0].end_time);
-      let date = ts.toLocaleDateString();
-      let start = ts.toLocaleTimeString();
-      let end = te.toLocaleTimeString();
-     
-      resu = {id :result[0].id, name:result[0].name , start: start , end: end, day: date, instructor: result[0].instructor_id , status: 1};
-      console.log(resu.schedule);
-      res.render('pages/editschedule', { data: { user: user, schedule: resu} });
+      console.log(result);
+      res.render('pages/editschedule', { data: { user: user, schedule: result[0]} });
     }
   });
 });
+
+app.put('/updateschedule', function(req, res){
+  var user = req.session.user;
+
+  var val =  [req.body.class_name, req.body.date, req.body.start , req.body.end, req.body.instructor_id, req.body.id ];
+  console.log("EditSchedule", val);
+  connection.query('UPDATE schedule SET name = ?, date = ?, start = ?, end = ?, instructor_id = ? WHERE id = ?', val ,function(error, result, fields){
+    if (error) throw console.log("error " + error); 
+    console.log(result)
+    if(result){
+    }
+    res.redirect('/mainschedule');
+  }); 
+}); 
 
 app.get('/deleteschedule', function(req, res){
   console.log("DELETESCHEDULE");

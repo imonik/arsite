@@ -4,13 +4,18 @@ $(document).ready(function()
     var start;
     var end;
     var instructor;
-    var validated = true;
+    var validated;
 
     var $className = $("#clase");
     var $instructorSelect= $("#instructor");
     var $dateSelect = $("#date");
     var $statTime = $("#start_time");
     var $endTime = $("#end_time");
+    var uid = $("#hdnUid").val();
+    var isEdit = $("#isEdit").val();
+    var $hdnStart = $("#hdnStart");
+    var $hdnEnd = $("#hdnEnd");
+    var $hdnInstructor = $("#hdnInstructorId");
     $instructorSelect.append('<option value="" selected="selected">Instructor</option>');
     var message = "";
 
@@ -18,6 +23,7 @@ $(document).ready(function()
     $dateSelect.datepicker();
 
     function validateData(){
+        validated = true;
         if(!$className.val()){
             validated = false;
             message += "Por favor ingrese el nombre\n";
@@ -37,7 +43,10 @@ $(document).ready(function()
     }
 
     $dateSelect.change(function() {
-        date = $(this).val();
+        //date = $(this).val();
+        var convertedDate = new Date( $(this).val());
+        date = convertedDate.toISOString().substring(0, 10);
+        console.log(date);
     });
 
     $instructorSelect.change(function() {
@@ -82,25 +91,59 @@ $(document).ready(function()
         });
     }
 
-    selectAllDropdowns();
-    function selectAllDropdowns(){
-        $("#start_time option").each(function(){
-            console.log(this);
+    if(isEdit === "true"){
+        selectDropdowns();
+    }
 
-            var hdnStart = $("#hdnStart");
+    function selectDropdowns(){
+        $('#start_time option').each(function(){
+            let hdnStart = $hdnStart.val().substring(0,5);
+            if (this.value == hdnStart) {
+                $(this).attr('selected', true);
+            }
+        });
 
-            if (hdnStart && hdnStart.val() && this.value == hdnStart.val().substring(0, 4)) {
+        $('#end_time option').each(function(){
+            let hdnEnd = $hdnEnd.val().substring(0,5);
+            if (this.value == hdnEnd) {
+                $(this).attr('selected', true);
+            }
+        });
+
+        $('#instructor option').each(function(){
+            let hdnInstructor = $hdnInstructor.val();
+            console.log(hdnInstructor);
+            if (this.value == hdnInstructor) {
                 $(this).attr('selected', true);
             }
         });
     }
 
     function clearAll(){
-        
+
     }
 
-
     $('#btn-add-schedule').click(function(e) {
+        e.preventDefault();
+
+        validateData();
+        if(!validated){
+            $('#message').text(message);
+            return;
+        }
+
+        let sched = { class_name: $className.val(), date:date, start: start + ":00" , end : end + ":00", instructor_id: instructor}
+
+        $.ajax({
+            url: '/schedule',
+            method: 'POST',
+            data: sched,
+        }).then(function(message){
+            window.location.replace("/mainschedule"); // redirect to schedules main page (listing)
+        });
+    });
+
+    $('#btn-update-schedule').click(function(e) {
         e.preventDefault();
 
         if(!validated){
@@ -108,11 +151,12 @@ $(document).ready(function()
             return;
         }
 
-        let sched = { class_name: $className.val(), date:date, start: start , end : end, instructor_id: instructor}
+        let sched = { class_name: $className.val(), date:date, start: start + ":00" , end : end  + ":00", instructor_id: instructor, id:uid}
+        console.log(sched);
 
         $.ajax({
-            url: '/schedule',
-            method: 'POST',
+            url: '/updateschedule',
+            method: 'PUT',
             data: sched,
         }).then(function(message){
             window.location.replace("/mainschedule"); // redirect to schedules main page (listing)

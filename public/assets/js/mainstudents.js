@@ -91,7 +91,6 @@ $(document).ready(function(){
             //$('#message').text(message);
             console.log(message);
             //getCats();
-            
         });
     });
 
