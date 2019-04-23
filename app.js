@@ -4,6 +4,7 @@ var cookieParser = require('cookie-Parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var mysql = require('mysql');
+var moment = require('moment');
 var app = express();
 
 
@@ -15,9 +16,9 @@ app.use(session({ secret: 'app', cookie: { maxAge: 6000 }}));
 app.use(cookieParser());
 
 var connection = mysql.createConnection({
-  host     : 'localhost', // mysqlserver.cmnemrz1mbor.us-west-1.rds.amazonaws.com
+  host     : 'localhost',//'mysqlserver.cmnemrz1mbor.us-west-1.rds.amazonaws.com',
   user     : 'root',
-  password : 'moni',
+  password : 'moni',//'password',
   database : 'ar_db'
 });
 
@@ -28,23 +29,33 @@ app.get('/', function(req, res) {
 });
 
 app.get('/backdoor', function(req, res) {
-  res.render('pages/backdoor');
+  res.render('pages/backdoor', {message:""});
 });
 
 app.get('/mainschedule', function(req, res) {
-  console.log(session);
-  console.log(req);
   var user = req.session.user;
 
+  console.log(user);
+  // if(!user){
+  //   res.redirect('pages/backdoor',  {message:""});
+  // }
   connection.query("SELECT * FROM schedule", function (error, result, fields) {
+    let date;
+    let startTime;
     if (error){
-      res.render('pages/error');
+      res.render('pages/error', {message : error});
       console.log(error);
     } 
 
     if (result.length == 0){
 			res.send('No results for that email. Please try again.\n');
 		} else {
+      for (let i = 0; i < result.length; i++) {
+        
+        let date1 = new Date(result[i].start_time);
+        console.log( moment(date1 * 1000).format('HH:mm:ss'));
+        
+      }
       res.render('pages/mainschedule', { data: { user: user, schedule: result} });
     }
   })
@@ -60,6 +71,7 @@ app.post('/schedule', function(req, res){
 
   connection.query('INSERT INTO schedule (name, start_time, end_time, instructor_id, status) VALUES (?,?,?,?,?)', val ,function(error, result, fields){
     if (error) throw error; 
+    else res.json({result: "success"});
   });
 });
 

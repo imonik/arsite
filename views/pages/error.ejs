@@ -3,6 +3,8 @@
       <title>Error</title>
   </head>
   <body>
-      <h1>ERROR PAGE</h1>
+    <div><p id="message"><%if(message){ %>
+      <h2><%= message %></h2>
+      <%}%></p></div>
   </body>
 </html>

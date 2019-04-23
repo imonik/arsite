@@ -28,11 +28,11 @@ CREATE TABLE memberships (
     price decimal NOT NULL
 );
 CREATE TABLE students(
-	id INT AUTO_INCREMENT NOT NULL, primary key(id),
+    id INT AUTO_INCREMENT NOT NULL, primary key(id),
     name VARCHAR(100) NOT NULL , 
     last_name VARCHAR(100) NULL,
     started_date datetime NOT NULL DEFAULT NOW(), 
-    membership_type tinyint NOT NULL, foreign key (membership_type) references memberships (id),
+    membership_type int NOT NULL, foreign key (membership_type) references memberships (id),
     membership_end_date datetime NULL
 );
 
