@@ -21,16 +21,16 @@ $(document).ready(function()
         if(!$className.val()){
             validated = false;
             message += "Por favor ingrese el nombre\n";
-        } else if($statTime.children("option:selected").val()) {
+        } else if(!$statTime.children("option:selected").val()) {
             validated = false;
             message += "Seleccione hora de inicio\n";
-        } else if($endTime.children("option:selected").val()) {
+        } else if(!$endTime.children("option:selected").val()) {
             validated = false;
             message += "Seleccione hora de fin\n";
-        } else if($instructorSelect.children("option:selected").val()) {
+        } else if(!$instructorSelect.children("option:selected").val()) {
             validated = false;
             message += "Seleccione un instructor\n";
-        } else if($dateSelect.val()){
+        } else if(!$dateSelect.val()){
             validated = false;
             message += "Por favor ingrese el nombre\n";
         }
@@ -95,29 +95,27 @@ $(document).ready(function()
         });
     }
 
+    function clearAll(){
+        
+    }
+
 
     $('#btn-add-schedule').click(function(e) {
         e.preventDefault();
 
-        if(!validateData()){
+        if(!validated){
             $('#message').text(message);
             return;
         }
 
-        let className = $("#clase").val();
-        let date2 = new Date(date).toISOString().slice(0, 10);
-        var status = 1;
-        x
+        let sched = { class_name: $className.val(), date:date, start: start , end : end, instructor_id: instructor}
 
         $.ajax({
             url: '/schedule',
             method: 'POST',
-            data: { class_name: className, start_time: date2 + " " + start , end_time: date2 + " " + end, instructor_id: instructor, status: status }
+            data: sched,
         }).then(function(message){
-            //$('#message').text(message);
-            console.log(message);
             window.location.replace("/mainschedule"); // redirect to schedules main page (listing)
         });
     });
-
 });

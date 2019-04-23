@@ -16,10 +16,11 @@ app.use(session({ secret: 'app', cookie: { maxAge: 6000 }}));
 app.use(cookieParser());
 
 var connection = mysql.createConnection({
-  host     : 'localhost',//'mysqlserver.cmnemrz1mbor.us-west-1.rds.amazonaws.com',
+  host     : 'mysqlserver.cmnemrz1mbor.us-west-1.rds.amazonaws.com',
   user     : 'root',
-  password : 'moni',//'password',
-  database : 'ar_db'
+  password : 'password',
+  database : 'ar_db',
+  timezone: 'utc'  
 });
 
 connection.connect();
@@ -50,12 +51,13 @@ app.get('/mainschedule', function(req, res) {
     if (result.length == 0){
 			res.send('No results for that email. Please try again.\n');
 		} else {
-      for (let i = 0; i < result.length; i++) {
-        
-        let date1 = new Date(result[i].start_time);
-        console.log( moment(date1 * 1000).format('HH:mm:ss'));
-        
-      }
+      // for (let i = 0; i < result.length; i++) {
+      //   let fullDate = new Date(result[i].start_time);
+      //   console.log(fullDate.toISOString().replace(/T/, ' ').      // replace T with a space
+      //   replace(/\..+/, ''))
+       
+      //   result[i].date = '2019-01-01';
+      // }
       res.render('pages/mainschedule', { data: { user: user, schedule: result} });
     }
   })
@@ -67,9 +69,9 @@ app.get('/error', function(req, res) {
 
 app.post('/schedule', function(req, res){
   console.log("ADD SCHEDULE");
-  var val = [req.body.class_name, req.body.start_time, req.body.end_time, 1,1];
-
-  connection.query('INSERT INTO schedule (name, start_time, end_time, instructor_id, status) VALUES (?,?,?,?,?)', val ,function(error, result, fields){
+  var val = [req.body.class_name, req.body.date, req.body.start , req.body.end, req.body.instructor_id,1];
+console.log(val);
+  connection.query('INSERT INTO schedule (name, date, start, end,instructor_id, status) VALUES (?,?,?,?,?,?)', val ,function(error, result, fields){
     if (error) throw error; 
     else res.json({result: "success"});
   });
