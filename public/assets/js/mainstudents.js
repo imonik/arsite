@@ -66,6 +66,12 @@ $(document).ready(function(){
         }).then(function(message) {
             console.log(message);
             window.location.replace("/mainstudents"); // redirect to students main page (listing)
+        }).fail(function(error) {
+            console.log(error);
+            if (error.status == 403) { // POST /addstudents returns Forbidden due to invalid session.
+                alert("Session has expired. Will redirect to login page.");
+                window.location.replace("/backdoor");
+            }
         });
     });
 

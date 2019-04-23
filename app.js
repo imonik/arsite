@@ -12,7 +12,7 @@ app.use(express.static("public"));
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.set('view engine', 'ejs');
-app.use(session({ secret: 'app', cookie: { maxAge: 6000 }}));
+app.use(session({ secret: 'app', cookie: { maxAge: 60000 }})); // milliseconds
 app.use(cookieParser());
 
 var connection = mysql.createConnection({
@@ -120,22 +120,20 @@ app.post('/login', function(req, res) {
   connection.query('SELECT * FROM admins WHERE email = ?', [req.body.email], function (error, results, fields) {
     if (error) throw error; 
     
-		if (results.length == 0){
-      //res.send('No results for that email. Please try again.\n');
-      res.send('pages/backdoor', {message:'Password does not match. Redirecting to home.'});
+		if (results.length == 0) {
+      res.send('pages/backdoor', { message:'User or password does not exist. Redirecting to home.' });
 		} 
 		else {
 			//bcrypt.compare(req.params.password, results[0].password_hash, function(err, result) {
 				if (req.body.password === results[0].password) {
           //console.log('User exists ' +  results[0].email);
-
           // At this point the user is found in the db and is valid.
           req.session.user = results[0];
           res.redirect('/mainschedule');
 				} else {
             //console.log('Password does not match. Redirecting to home.');
             //res.redirect('/error');
-            res.send('pages/backdoor', {message:'Password does not match. Redirecting to home.'});
+            res.send('pages/backdoor', { message:'User or password does not exist. Redirecting to home.' });
 			  }
 			}//);
 		//}
@@ -179,6 +177,11 @@ app.get('/getmemberships', function(req, res){
 app.get('/mainstudents', function(req, res) {
   var user = req.session.user;
 
+  if (!user) {
+    console.log('Session expired or not set. Redirecting to home.');
+    res.redirect('/backdoor');
+  }
+
   connection.query("SELECT * FROM students", function (error, result, fields) {
     if (error) {
       console.log(error);
@@ -190,7 +193,14 @@ app.get('/mainstudents', function(req, res) {
 });
 
 app.post('/addstudent', function(req, res) {
-  console.log("ADD STUDENT ENDPOINT HIT.");
+  var user = req.session.user;
+
+  if (!user) {
+    console.log('Session expired or not set. Terminating request.');
+    res.status(403).json({ success: false, message: "Session does not exist or has expired.", session_alive: false });
+    return;
+  }
+
   var val = [req.body.name, req.body.last_name, req.body.start_time, req.body.membership_type, req.body.membership_end_date];
 
   connection.query('INSERT INTO students (name, last_name, started_date, membership_type, membership_end_date) VALUES (?,?,?,?,?)', val ,function(error, result, fields) {
