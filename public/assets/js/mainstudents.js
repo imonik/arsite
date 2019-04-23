@@ -1,13 +1,13 @@
 $(document).ready(function(){
     console.log("READY");
 
-    var date;
-    var membership;
-    var expiration;
+    var _date;
+    var _membership;
+    var _expiration;
 
-    var $membershipsSelect = $("#memberships");
-    var $dateSelect = $("#date");
-    var $expiration = $("#expiration");
+    var $membershipsSelect    = $("#memberships");
+    var $startDateSelect      = $("#date");
+    var $expirationDateSelect = $("#expiration");
 
     function getMemberships() {
         $.ajax({
@@ -16,50 +16,56 @@ $(document).ready(function(){
         }).then(function(result) {
             console.log(result);
             $.each(result, function() {
-                //${instructor_id==this.id ? 'selected' : ''}
                 $membershipsSelect.append(`<option value="${this.id}" >${this.description}</option>`);
             });
         });
     }
     
     getMemberships();
-    $dateSelect.datepicker();
-    $expiration.datepicker();
+    $startDateSelect.datepicker();
+    $expirationDateSelect.datepicker();
 
-    $dateSelect.change(function() {
-        date = $(this).val();
-        console.log(date); 
+    $startDateSelect.change(function() {
+        _date = $(this).val();
+        console.log(_date);
     });
 
     $membershipsSelect.change(function() {
-        membership = $(this).val();
-        console.log(membership); 
+        _membership = $(this).val();
+        console.log(_membership);
     });
 
-    $expiration.change(function() {
-        expiration = $(this).val();
-        console.log(date); 
+    $expirationDateSelect.change(function() {
+        _expiration = $(this).val();
+        console.log(_expiration);
     });
 
     $('#btn-add-student').click(function(e) {
         e.preventDefault();
 
-        let name = $("#name").val();
-        let lastName = $("#lastName").val();
-        let date2 = new Date(date).toISOString().slice(0, 10);
-        let expiration2 = new Date(expiration).toISOString().slice(0, 10);
-        var status = 1;
+        let name           = $("#name").val();
+        let lastName       = $("#lastName").val();
+        let startDate      = new Date(_date).toISOString().slice(0, 10);
+        let expirationDate = new Date(_expiration).toISOString().slice(0, 10);
+        var status         = 1; // active
 
-        console.log({ name: name, last_name: lastName, start_time: date2,membership_type : membership, membership_end_date : expiration });
+        var student_obj = {
+            name                : name,
+            last_name           : lastName,
+            start_time          : startDate,
+            membership_type     : _membership,
+            membership_end_date : expirationDate
+         };
+
+        console.log(student_obj);
+
         $.ajax({
             url: '/addstudent',
             method: 'POST',
-            // [req.body.name, req.body.las_name, req.body.start_time, membership_type, membership_end_date];
-            data: { name: name, last_name: lastName, start_time: date2,membership_type : membership, membership_end_date : expiration2 }
-        }).then(function(message){
-            //$('#message').text(message);
+            data: student_obj
+        }).then(function(message) {
             console.log(message);
-            //getCats();
+            window.location.replace("/mainstudents"); // redirect to students main page (listing)
         });
     });
 
