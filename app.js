@@ -35,12 +35,11 @@ app.get('/backdoor', function(req, res) {
 
 app.get('/mainschedule', function(req, res) {
   var user = req.session.user;
-
-  console.log(user);
-  // if(!user){
-  //   res.redirect('pages/backdoor',  {message:""});
-  // }
-  connection.query("SELECT * FROM schedule", function (error, result, fields) {
+  if (!user) {
+    console.log('Session expired or not set. Redirecting to home.');
+    res.redirect('/backdoor');
+  }
+  connection.query("Select s.*, i.name as instructor FROM ar_db.schedule as s join instructors i on s.instructor_id = i.id", function (error, result, fields) {
     let date;
     let startTime;
     if (error){
@@ -72,7 +71,13 @@ app.get('/error', function(req, res) {
 });
 
 app.post('/schedule', function(req, res){
-  console.log("ADD SCHEDULE");
+  var user = req.session.user;
+
+  if (!user) {
+    console.log('Session expired or not set. Terminating request.');
+    res.status(403).json({ success: false, message: "Session does not exist or has expired.", session_alive: false });
+    return;
+  }
   var val = [req.body.class_name, req.body.date, req.body.start , req.body.end, req.body.instructor_id,1];
 console.log(val);
   connection.query('INSERT INTO schedule (name, date, start, end,instructor_id, status) VALUES (?,?,?,?,?,?)', val ,function(error, result, fields){
@@ -87,7 +92,12 @@ app.get('/editschedule/:id', function(req, res){
     if (error) throw error; 
     console.log(result)
     if(result){
-      console.log(result);
+      let fullDate = new Date(result[0].date);
+      let date2 = moment(fullDate.toISOString().substring(0, 10), 'YYYY/MM/DD');
+      let train_date = date2.format('DD/MM/YYYY');
+      result[0].date = train_date;
+      let startTime = result[0].start.substring(0,5);
+      let endTime = result[0].end.substring(0,5);
       res.render('pages/editschedule', { data: { user: user, schedule: result[0]} });
     }
   });
@@ -115,7 +125,6 @@ app.get('/deleteschedule', function(req, res){
   });
 });
 
-
 app.post('/login', function(req, res) {
   connection.query('SELECT * FROM admins WHERE email = ?', [req.body.email], function (error, results, fields) {
     if (error) throw error; 
@@ -139,8 +148,6 @@ app.post('/login', function(req, res) {
 		//}
 });
 });
-
-
 
 app.get('/getinstructors', function(req, res) {
   connection.query('SELECT * FROM instructors WHERE is_active = ?', [1], function (error, results, fields) {
@@ -182,11 +189,21 @@ app.get('/mainstudents', function(req, res) {
     res.redirect('/backdoor');
   }
 
-  connection.query("SELECT * FROM students", function (error, result, fields) {
+  connection.query("SELECT s.*, m.description FROM students s join memberships m on m.id = s.membership_type", function (error, result, fields) {
     if (error) {
       console.log(error);
       res.render('pages/error');
     } 
+    if(result.length == 0){
+      console.log("no results ");
+    } else {
+      for (let i = 0; i < result.length; i++) {
+        let fullDate = new Date(result[i].membership_end_date);
+        let date2 = moment(fullDate.toISOString().substring(0, 10), 'YYYY/MM/DD');
+        let train_date = date2.format('DD/MM/YYYY');
+        result[i].membership_end_date = train_date;
+      }
+    }
     console.log(result);
     res.render('pages/mainstudents', { data: { user: user, students: result } });
   })
@@ -212,12 +229,24 @@ app.post('/addstudent', function(req, res) {
 
 app.get('/editstudent/:id', function(req, res){
   var user = req.session.user;
-  console.log("EditStudent");
+
+  if (!user) {
+    console.log('Session expired or not set. Redirecting to home.');
+    res.redirect('/backdoor');
+  }
+
   connection.query('SELECT * FROM students WHERE id = ?',  req.params.id ,function(error, result, fields){
     if (error) throw error; 
 
     if(result){
-      console.log( { data: { user: user, student: result[0]} });
+      let fullDate = new Date(result[0].membership_end_date);
+      let fullDate2 = new Date(result[0].started_date);
+      let date2 = moment(fullDate.toISOString().substring(0, 10), 'YYYY/MM/DD');
+      let date3 = moment(fullDate2.toISOString().substring(0, 10), 'YYYY/MM/DD');
+      let train_date = date2.format('DD/MM/YYYY');
+      let train_date2 = date3.format('DD/MM/YYYY');
+      result[0].membership_end_date = train_date;
+      result[0].started_date = train_date2;
       res.render('pages/editstudent', { data: { user: user, student: result[0]} });
     }
   });

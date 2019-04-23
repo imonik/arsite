@@ -29,15 +29,21 @@
 			<div class="row">
 				<div class="col">
 					<div class="header_content d-flex flex-row align-items-center justify-content-start trans_400">
-						<a href="#">
-							<div class="logo d-flex flex-row align-items-right justify-content-start"><div>AR<span>Pole dance & fitness Horario</span></div></div>
-						</a>
-						<p>Hello <% if (data && data.user) { %>
-							<h2><%= data.user.admin_name %></h2>
-						  <% } %></p>
+						<div class="logo d-flex flex-row align-items-right justify-content-start"><div>AR<span> Horario</span></div></div>
 					</div>
 				</div>
-			</div>
+				<div  class="col">
+					<ul class="col float-right">
+						<li class="col float-right"><a href="/mainschedule">Horario</a></li>
+						<li class="col float-right"><a href="/mainstudents">Estudiantes</a></li>
+					</ul>
+				</div>
+				<div class="col float-right">
+					<p>Hello <% if (data && data.user) { %>
+						<h2><%= data.user.admin_name %></h2>
+					<% } %></p>
+					<p><a href="/logout">Cerrar Session</a></p>
+				</div>
 		</div>
 	</header>
 
@@ -164,7 +170,7 @@
 									<th scope="col">Inicio</th>
 									<th scope="col">Fin</th>
 									<th scope="col">Instructor</th>
-									<th scope="col">Status</th>
+									<!-- <th scope="col">Status</th> -->
 									<th scope="col" colspan="2">Acciones</th>
 								</tr>
 							</thead>
@@ -176,8 +182,8 @@
 											<td><%=data.schedule[i].date%></td>
 											<td><%=data.schedule[i].start%></td>
 											<td><%=data.schedule[i].end%></td>
-											<td><%=data.schedule[i].instructor_id%></td>
-											<td><%=data.schedule[i].status%></td>
+											<td><%=data.schedule[i].instructor%></td>
+											<!-- <td><%=data.schedule[i].status%></td> -->
 											<td><a href="/editschedule/<%=data.schedule[i].id%>">Actualizar</a></td>
 											<td><a href="/deleteschedule?id=<%=data.schedule[i].id%>">Borrar</a></td>
 										</tr>

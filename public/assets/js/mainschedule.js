@@ -98,14 +98,14 @@ $(document).ready(function()
     function selectDropdowns(){
         $('#start_time option').each(function(){
             let hdnStart = $hdnStart.val().substring(0,5);
-            if (this.value == hdnStart) {
+            if ("0" + this.value == hdnStart) {
                 $(this).attr('selected', true);
             }
         });
 
         $('#end_time option').each(function(){
             let hdnEnd = $hdnEnd.val().substring(0,5);
-            if (this.value == hdnEnd) {
+            if ("0" + this.value == hdnEnd) {
                 $(this).attr('selected', true);
             }
         });
@@ -146,20 +146,31 @@ $(document).ready(function()
     $('#btn-update-schedule').click(function(e) {
         e.preventDefault();
 
+        validateData();
         if(!validated){
             $('#message').text(message);
             return;
         }
 
         let sched = { class_name: $className.val(), date:date, start: start + ":00" , end : end  + ":00", instructor_id: instructor, id:uid}
-        console.log(sched);
 
         $.ajax({
             url: '/updateschedule',
             method: 'PUT',
             data: sched,
         }).then(function(message){
+            console.log(message);
             window.location.replace("/mainschedule"); // redirect to schedules main page (listing)
+        });
+    });
+
+    $('#btnLogOut').click(function(e) {
+        $.ajax({
+            url: '/logout',
+            method: 'GET',
+            data: {},
+        }).then(function(message){
+            window.location.replace("/backdoor"); // redirect to schedules main page (listing)
         });
     });
 });

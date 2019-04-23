@@ -25,21 +25,27 @@
 	<!-- Header -->
 
 	<header class="header">
-		<div class="container">
-			<div class="row">
-				<div class="col">
-					<div class="header_content d-flex flex-row align-items-center justify-content-start trans_400">
-						<a href="#">
-							<div class="logo d-flex flex-row align-items-right justify-content-start"><div>AR<span>Pole dance & fitness Horario</span></div></div>
-						</a>
+			<div class="container">
+				<div class="row">
+					<div class="col">
+						<div class="header_content d-flex flex-row align-items-center justify-content-start trans_400">
+							<div class="logo d-flex flex-row align-items-right justify-content-start"><div>AR<span> Estudiante</span></div></div>
+						</div>
+					</div>
+					<div  class="col">
+						<ul class="col float-right">
+							<li class="col float-right"><a href="/mainschedule">Horario</a></li>
+							<li class="col float-right"><a href="/mainstudents">Estudiantes</a></li>
+						</ul>
+					</div>
+					<div class="col float-right">
 						<p>Hello <% if (data && data.user) { %>
 							<h2><%= data.user.admin_name %></h2>
-						  <% } %></p>
+						<% } %></p>
+						<p><a href="/logout">Cerrar Session</a></p>
 					</div>
-				</div>
 			</div>
-		</div>
-	</header>
+		</header>
 
 	<!-- Hamburger -->
 	
