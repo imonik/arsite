@@ -12,7 +12,7 @@ app.use(express.static("public"));
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.set('view engine', 'ejs');
-app.use(session({ secret: 'app', cookie: { maxAge: 60000 }})); // milliseconds
+app.use(session({ secret: 'app', cookie: { maxAge: 60000*12 }})); // milliseconds
 app.use(cookieParser());
 
 var connection = mysql.createConnection({
@@ -23,11 +23,13 @@ var connection = mysql.createConnection({
   timezone: 'utc'  
 });
 
+
 connection.connect();
 
 app.get('/', function(req, res) {
   res.render('pages/index');
 });
+
 
 app.get('/backdoor', function(req, res) {
   res.render('pages/backdoor', {message:""});
@@ -46,7 +48,6 @@ app.get('/mainschedule', function(req, res) {
       res.render('pages/error', {message : error});
       console.log(error);
     } 
-
     if (result.length == 0){
 			res.send('No results for that email. Please try again.\n');
 		} else {
@@ -57,7 +58,6 @@ app.get('/mainschedule', function(req, res) {
          result[i].date = train_date;
          let startTime = result[i].start.substring(0,5);
          let endTime = result[i].end.substring(0,5);
-
         result[i].start = startTime;
         endTime = result[i].end = endTime;
        }

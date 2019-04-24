@@ -73,6 +73,7 @@ $(document).ready(function(){
                 window.location.replace("/backdoor");
             }
         });
+        
     });
 
     $('#btn-update-student').click(function(e) {
